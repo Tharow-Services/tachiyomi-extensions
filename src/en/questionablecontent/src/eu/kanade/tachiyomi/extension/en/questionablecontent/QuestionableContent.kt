@@ -114,10 +114,6 @@ class QuestionableContent : ParsedHttpSource(), ConfigurableSource {
             summary = "Enable to see the author's notes at the end of chapters (if they're there)."
             setDefaultValue(false)
 
-            setOnPreferenceChangeListener { _, newValue ->
-                val checkValue = newValue as Boolean
-                preferences.edit().putBoolean(SHOW_AUTHORS_NOTES_KEY, checkValue).commit()
-            }
         }
         screen.addPreference(authorsNotesPref)
     }

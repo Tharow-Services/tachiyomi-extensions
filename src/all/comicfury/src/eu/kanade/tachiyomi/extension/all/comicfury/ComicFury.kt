@@ -17,6 +17,7 @@ import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.util.asJsoup
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 import okhttp3.Response
 import uy.kohesive.injekt.Injekt
@@ -39,11 +40,15 @@ class ComicFury(
     /**
      * Archive is on a separate page from manga info
      */
-    override fun chapterListRequest(manga: SManga): Request {
-        val id = manga.url.substringAfter("?url=")
-        val req = Request.Builder()
-        req.url("$baseUrl/read/$id/archive")
-        return req.build()
+    override fun chapterListRequest(manga: SManga): Request =
+        GET("$baseUrl/read/${manga.url.substringAfter("?url=")}/archive")
+
+    /**
+     * Open Archive Url instead of the details page
+     * Helps with getting past the nfsw pages
+     */
+    override fun getMangaUrl(manga: SManga): String {
+        return "$baseUrl/read/" + manga.url.substringAfter("?url=") + "/archive"
     }
 
     /**
@@ -71,7 +76,7 @@ class ComicFury(
                 val name = chapter.text()
                 chapters.addAll(
                     client.newCall(
-                        GET(baseUrl + chapter.attr("href")),
+                        GET("$baseUrl${chapter.attr("href")}"),
                     ).execute()
                         .use { chapterListParse(it) }
                         .mapIndexed { i, it ->
@@ -159,10 +164,9 @@ class ComicFury(
         return MangasPage(list, (jsp.selectFirst("div.search-next-page") != null))
     }
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val req: HttpUrl.Builder = HttpUrl.Builder(); req.host("comicfury.com"); req.scheme("https")
-        req.encodedPath("/search.php"); req.addEncodedQueryParameter("query", query)
+        val req: HttpUrl.Builder= "$baseUrl/search.php".toHttpUrl().newBuilder()
         req.addQueryParameter("page", page.toString())
-        req.addQueryParameter("language", lang)
+        req.addQueryParameter("language", lang.replace("-BR", "")) //remove ending to pt-BR
         filters.forEach {
             when (it) {
                 is TagsFilter -> req.addEncodedQueryParameter(

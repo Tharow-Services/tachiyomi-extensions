@@ -8,7 +8,7 @@ class ComicFuryFactory : SourceFactory {
         ComicFury("all"),
         ComicFury("en"),
         ComicFury("es"),
-        ComicFury("pt"),
+        ComicFury("pt-BR"),
         ComicFury("de"),
         ComicFury("fr"),
         ComicFury("it"),

@@ -27,10 +27,13 @@ import java.util.Locale
 
 class ComicFury(
     override val lang: String,
+    private val siteLang: String = lang, // override lang string used in MangaSearch
 ) : HttpSource(), ConfigurableSource {
     override val baseUrl: String = "https://comicfury.com"
     override val name: String = "Comic Fury"
     override val supportsLatest: Boolean = true
+
+
 
     private val dateFormat = SimpleDateFormat("dd MMM yyyy hh:mm aa", Locale.US)
     private val dateFormatSlim = SimpleDateFormat("dd MMM yyyy", Locale.US)
@@ -164,9 +167,9 @@ class ComicFury(
         return MangasPage(list, (jsp.selectFirst("div.search-next-page") != null))
     }
     override fun searchMangaRequest(page: Int, query: String, filters: FilterList): Request {
-        val req: HttpUrl.Builder= "$baseUrl/search.php".toHttpUrl().newBuilder()
+        val req: HttpUrl.Builder = "$baseUrl/search.php".toHttpUrl().newBuilder()
         req.addQueryParameter("page", page.toString())
-        req.addQueryParameter("language", lang.replace("-BR", "")) //remove ending to pt-BR
+        req.addQueryParameter("language", siteLang)
         filters.forEach {
             when (it) {
                 is TagsFilter -> req.addEncodedQueryParameter(

@@ -28,13 +28,11 @@ import java.util.Locale
 class ComicFury(
     override val lang: String,
     private val siteLang: String = lang, // override lang string used in MangaSearch
+    private val extraName: String = "",
 ) : HttpSource(), ConfigurableSource {
     override val baseUrl: String = "https://comicfury.com"
-    override val name: String = "Comic Fury"
+    override val name: String = "Comic Fury$extraName" //Used for No Text
     override val supportsLatest: Boolean = true
-
-
-
     private val dateFormat = SimpleDateFormat("dd MMM yyyy hh:mm aa", Locale.US)
     private val dateFormatSlim = SimpleDateFormat("dd MMM yyyy", Locale.US)
 

@@ -18,6 +18,6 @@ class ComicFuryFactory : SourceFactory {
         ComicFury("ru"),
         ComicFury("fi"),
         ComicFury("other"),
-        ComicFury("No-Text", "notext"),
+        ComicFury("other-notext", "notext"),
     )
 }
